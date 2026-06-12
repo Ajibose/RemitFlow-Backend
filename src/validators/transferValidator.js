@@ -1,6 +1,7 @@
 'use strict';
 
 const money = require('../utils/money');
+const config = require('../config');
 
 /**
  * Validate the body for POST /api/transfers.
@@ -22,6 +23,8 @@ function validateCreateTransfer(req) {
     errors.push('amount is required');
   } else if (!money.isPositiveAmount(amount)) {
     errors.push('amount must be a positive number');
+  } else if (Number(amount) > config.maxTransferAmount) {
+    errors.push(`amount must not exceed ${config.maxTransferAmount}`);
   }
   if (!from) {
     errors.push('from currency is required');

@@ -18,6 +18,9 @@ const config = {
     flat: parseFloat(process.env.TRANSFER_FEE_FLAT) || 0.3,
   },
 
+  // Largest single transfer amount accepted (in the source currency).
+  maxTransferAmount: parseFloat(process.env.MAX_TRANSFER_AMOUNT) || 50000,
+
   stellar: {
     network: process.env.STELLAR_NETWORK || 'testnet',
   },
