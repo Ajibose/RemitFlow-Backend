@@ -1,6 +1,7 @@
 'use strict';
 
 const userService = require('../services/userService');
+const { parsePagination } = require('../utils/pagination');
 
 /**
  * User controllers.
@@ -8,11 +9,13 @@ const userService = require('../services/userService');
 
 /**
  * GET /api/users
- * List all users.
+ * List users with limit/offset pagination.
  */
 function listUsers(req, res) {
-  const users = userService.listUsers();
-  res.json({ count: users.length, users });
+  const all = userService.listUsers();
+  const { limit, offset } = parsePagination(req.query);
+  const users = all.slice(offset, offset + limit);
+  res.json({ total: all.length, count: users.length, limit, offset, users });
 }
 
 /**
