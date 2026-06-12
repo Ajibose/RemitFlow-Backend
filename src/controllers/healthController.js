@@ -1,7 +1,7 @@
 'use strict';
 
 const config = require('../config');
-const { version } = require('../../package.json');
+const { name, version } = require('../../package.json');
 
 /**
  * Health controller.
@@ -22,6 +22,19 @@ function getHealth(req, res) {
   });
 }
 
+/**
+ * GET /api/version
+ * Reports the service name and version.
+ */
+function getVersion(req, res) {
+  res.json({
+    name,
+    version,
+    env: config.env,
+  });
+}
+
 module.exports = {
   getHealth,
+  getVersion,
 };
