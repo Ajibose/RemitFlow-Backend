@@ -82,3 +82,18 @@ pending ──▶ claimed
 
 A transfer starts as `pending` and can move to either `claimed` or
 `cancelled`. Terminal states cannot transition further.
+
+## Examples
+
+```bash
+# Get a quote for sending 100 USD to INR
+curl "http://localhost:3000/api/quote?amount=100&from=USD&to=INR"
+
+# Create a transfer
+curl -X POST http://localhost:3000/api/transfers \
+  -H "Content-Type: application/json" \
+  -d '{"senderName":"Alice","recipientName":"Bob","amount":100,"from":"USD","to":"INR"}'
+
+# Claim a transfer
+curl -X POST http://localhost:3000/api/transfers/<id>/claim
+```
