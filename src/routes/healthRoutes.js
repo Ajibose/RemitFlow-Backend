@@ -9,4 +9,7 @@ const router = express.Router();
 // GET /api/health
 router.get('/', asyncHandler(healthController.getHealth));
 
+// GET /api/health/live
+router.get('/live', asyncHandler(healthController.getLiveness));
+
 module.exports = router;
