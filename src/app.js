@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const routes = require('./routes');
 const requestLogger = require('./middleware/requestLogger');
+const rateLimit = require('./middleware/rateLimit');
 const jsonError = require('./middleware/jsonError');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
@@ -31,6 +32,9 @@ function createApp() {
     app.use(morgan('dev'));
   }
   app.use(requestLogger);
+
+  // Basic abuse protection on the API surface.
+  app.use('/api', rateLimit(config.rateLimit));
 
   // API routes.
   app.use('/api', routes);

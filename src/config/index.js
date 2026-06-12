@@ -24,6 +24,11 @@ const config = {
 
   // CORS origin; "*" allows any origin (fine for a public demo API).
   corsOrigin: process.env.CORS_ORIGIN || '*',
+
+  rateLimit: {
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000,
+    max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
+  },
 };
 
 module.exports = config;
