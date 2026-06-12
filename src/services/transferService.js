@@ -21,6 +21,13 @@ const stellarService = require('./stellarService');
 function listTransfers(status) {
   let transfers = Array.from(store.transfers.values());
   if (status) {
+    const validStatuses = Object.values(TRANSFER_STATUS);
+    if (!validStatuses.includes(status)) {
+      throw ApiError.badRequest(
+        `Invalid status filter: ${status}`,
+        { allowed: validStatuses }
+      );
+    }
     transfers = transfers.filter((t) => t.status === status);
   }
   return transfers;
