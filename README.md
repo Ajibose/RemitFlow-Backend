@@ -43,25 +43,34 @@ See the endpoint reference below. All responses are JSON. Errors use a
 consistent envelope:
 
 ```json
-{ "error": { "message": "...", "status": 400, "details": { } } }
+{ "error": { "message": "...", "status": 400, "details": { }, "requestId": "...", "at": "..." } }
 ```
+
+Every response carries an `X-Request-Id` header (echoed from the request when
+supplied) so logs and errors can be correlated.
 
 ## Endpoints
 
 ### Health
 
-- `GET /api/health` — liveness probe.
+- `GET /api/health` — service health snapshot (version, uptime, env).
+- `GET /api/health/live` — liveness probe.
+- `GET /api/health/ready` — readiness probe with dependency checks.
+- `GET /api/version` — service name and version.
 
 ### Rates & quotes
 
 - `GET /api/rates` — list supported currencies and their USD rate.
+- `GET /api/rates/:pair` — rate for one pair, e.g. `/api/rates/USD-INR`.
 - `GET /api/quote?amount=&from=&to=` — FX quote with fee breakdown.
 
 ### Transfers
 
 - `POST /api/transfers` — create a transfer.
   Body: `{ senderName, recipientName, amount, from, to }`
-- `GET /api/transfers` — list transfers (optional `?status=`).
+- `GET /api/transfers` — list transfers. Supports `?status=`, `?q=` (name
+  search) and `?limit=`/`?offset=` pagination.
+- `GET /api/transfers/stats` — aggregate counts and volume by currency.
 - `GET /api/transfers/:id` — fetch one transfer.
 - `POST /api/transfers/:id/claim` — recipient claims the transfer.
 - `POST /api/transfers/:id/cancel` — sender cancels a pending transfer.
@@ -96,4 +105,8 @@ curl -X POST http://localhost:3000/api/transfers \
 
 # Claim a transfer
 curl -X POST http://localhost:3000/api/transfers/<id>/claim
+
+# Search transfers by name and view aggregate stats
+curl "http://localhost:3000/api/transfers?q=alice"
+curl "http://localhost:3000/api/transfers/stats"
 ```
