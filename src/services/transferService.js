@@ -14,12 +14,17 @@ const stellarService = require('./stellarService');
  */
 
 /**
- * Return all transfers, optionally filtered by status.
- * @param {string} [status]
+ * Return all transfers, optionally filtered by status and/or a free-text
+ * search across the sender and recipient names.
+ * @param {object} [filters]
+ * @param {string} [filters.status]
+ * @param {string} [filters.search]
  * @returns {Array<object>}
  */
-function listTransfers(status) {
+function listTransfers(filters = {}) {
+  const { status, search } = filters;
   let transfers = Array.from(store.transfers.values());
+
   if (status) {
     const validStatuses = Object.values(TRANSFER_STATUS);
     if (!validStatuses.includes(status)) {
@@ -30,6 +35,16 @@ function listTransfers(status) {
     }
     transfers = transfers.filter((t) => t.status === status);
   }
+
+  if (search) {
+    const needle = String(search).trim().toLowerCase();
+    transfers = transfers.filter(
+      (t) =>
+        t.senderName.toLowerCase().includes(needle) ||
+        t.recipientName.toLowerCase().includes(needle)
+    );
+  }
+
   return transfers;
 }
 

@@ -18,10 +18,13 @@ function createTransfer(req, res) {
 
 /**
  * GET /api/transfers
- * List transfers, optionally filtered by ?status=.
+ * List transfers, optionally filtered by ?status= and/or ?q= (name search).
  */
 function listTransfers(req, res) {
-  const all = transferService.listTransfers(req.query.status);
+  const all = transferService.listTransfers({
+    status: req.query.status,
+    search: req.query.q,
+  });
   const { limit, offset } = parsePagination(req.query);
   const transfers = all.slice(offset, offset + limit);
   res.json({ total: all.length, count: transfers.length, limit, offset, transfers });
