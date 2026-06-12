@@ -21,6 +21,9 @@ const config = {
   stellar: {
     network: process.env.STELLAR_NETWORK || 'testnet',
   },
+
+  // CORS origin; "*" allows any origin (fine for a public demo API).
+  corsOrigin: process.env.CORS_ORIGIN || '*',
 };
 
 module.exports = config;
