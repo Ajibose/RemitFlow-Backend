@@ -1,6 +1,7 @@
 'use strict';
 
 const transferService = require('../services/transferService');
+const { parsePagination } = require('../utils/pagination');
 
 /**
  * Transfer controllers.
@@ -20,8 +21,10 @@ function createTransfer(req, res) {
  * List transfers, optionally filtered by ?status=.
  */
 function listTransfers(req, res) {
-  const transfers = transferService.listTransfers(req.query.status);
-  res.json({ count: transfers.length, transfers });
+  const all = transferService.listTransfers(req.query.status);
+  const { limit, offset } = parsePagination(req.query);
+  const transfers = all.slice(offset, offset + limit);
+  res.json({ total: all.length, count: transfers.length, limit, offset, transfers });
 }
 
 /**
