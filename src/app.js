@@ -20,7 +20,7 @@ function createApp() {
   const app = express();
 
   // Core middleware.
-  app.use(cors());
+  app.use(cors({ origin: config.corsOrigin }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
 
