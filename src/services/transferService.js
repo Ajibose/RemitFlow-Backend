@@ -48,15 +48,15 @@ function createTransfer(data) {
   const quote = quoteService.getQuote(data.amount, data.from, data.to);
   const settlement = stellarService.submitPayment({
     amount: quote.sendAmount,
-    currency: data.from,
+    currency: quote.from,
   });
 
   const transfer = {
     id: prefixedId('txn'),
     senderName: data.senderName,
     recipientName: data.recipientName,
-    from: data.from,
-    to: data.to,
+    from: quote.from,
+    to: quote.to,
     sendAmount: quote.sendAmount,
     fee: quote.fee,
     rate: quote.rate,
