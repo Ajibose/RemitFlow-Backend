@@ -33,9 +33,19 @@ class ApiError extends Error {
     return new ApiError(409, message, details);
   }
 
+  /** Convenience factory for 422 Unprocessable Entity. */
+  static unprocessable(message, details) {
+    return new ApiError(422, message, details);
+  }
+
   /** Convenience factory for 429 Too Many Requests. */
   static tooManyRequests(message, details) {
     return new ApiError(429, message, details);
+  }
+
+  /** Convenience factory for 503 Service Unavailable. */
+  static serviceUnavailable(message, details) {
+    return new ApiError(503, message, details);
   }
 }
 
