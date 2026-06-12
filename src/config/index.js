@@ -31,6 +31,9 @@ const config = {
   // Maximum accepted JSON request body size (passed to express.json).
   bodyLimit: process.env.BODY_LIMIT || '100kb',
 
+  // Per-request time budget before a 503 is returned.
+  requestTimeoutMs: parseInt(process.env.REQUEST_TIMEOUT_MS, 10) || 15 * 1000,
+
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000,
     max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,

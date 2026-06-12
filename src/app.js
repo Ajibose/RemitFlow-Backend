@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const routes = require('./routes');
 const securityHeaders = require('./middleware/securityHeaders');
+const requestTimeout = require('./middleware/requestTimeout');
 const requestId = require('./middleware/requestId');
 const requestLogger = require('./middleware/requestLogger');
 const rateLimit = require('./middleware/rateLimit');
@@ -29,6 +30,9 @@ function createApp() {
   app.use(express.json({ limit: config.bodyLimit }));
   app.use(express.urlencoded({ extended: false, limit: config.bodyLimit }));
   app.use(jsonError);
+
+  // Fail slow requests instead of hanging the connection.
+  app.use(requestTimeout({ ms: config.requestTimeoutMs }));
 
   // Assign/propagate a correlation id before logging.
   app.use(requestId);
