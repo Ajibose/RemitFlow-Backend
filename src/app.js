@@ -26,8 +26,8 @@ function createApp() {
   // Core middleware.
   app.use(securityHeaders);
   app.use(cors({ origin: config.corsOrigin }));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.json({ limit: config.bodyLimit }));
+  app.use(express.urlencoded({ extended: false, limit: config.bodyLimit }));
   app.use(jsonError);
 
   // Assign/propagate a correlation id before logging.

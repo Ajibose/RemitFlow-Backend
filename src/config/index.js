@@ -25,6 +25,9 @@ const config = {
   // CORS origin; "*" allows any origin (fine for a public demo API).
   corsOrigin: process.env.CORS_ORIGIN || '*',
 
+  // Maximum accepted JSON request body size (passed to express.json).
+  bodyLimit: process.env.BODY_LIMIT || '100kb',
+
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000,
     max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
