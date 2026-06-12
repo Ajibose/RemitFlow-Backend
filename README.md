@@ -45,3 +45,40 @@ consistent envelope:
 ```json
 { "error": { "message": "...", "status": 400, "details": { } } }
 ```
+
+## Endpoints
+
+### Health
+
+- `GET /api/health` — liveness probe.
+
+### Rates & quotes
+
+- `GET /api/rates` — list supported currencies and their USD rate.
+- `GET /api/quote?amount=&from=&to=` — FX quote with fee breakdown.
+
+### Transfers
+
+- `POST /api/transfers` — create a transfer.
+  Body: `{ senderName, recipientName, amount, from, to }`
+- `GET /api/transfers` — list transfers (optional `?status=`).
+- `GET /api/transfers/:id` — fetch one transfer.
+- `POST /api/transfers/:id/claim` — recipient claims the transfer.
+- `POST /api/transfers/:id/cancel` — sender cancels a pending transfer.
+
+### Users
+
+- `GET /api/users` — list users.
+- `GET /api/users/:id` — fetch one user.
+- `POST /api/users` — create a user. Body: `{ name, email, country? }`
+
+## Transfer lifecycle
+
+```
+pending ──▶ claimed
+   │
+   └──────▶ cancelled
+```
+
+A transfer starts as `pending` and can move to either `claimed` or
+`cancelled`. Terminal states cannot transition further.
