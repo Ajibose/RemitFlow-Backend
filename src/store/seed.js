@@ -21,6 +21,18 @@ function seed() {
     country: 'IN',
   });
 
+  const carlos = userService.createUser({
+    name: 'Carlos Diaz',
+    email: 'carlos@example.com',
+    country: 'MX',
+  });
+
+  userService.createUser({
+    name: 'Ada Okoro',
+    email: 'ada@example.com',
+    country: 'NG',
+  });
+
   transferService.createTransfer({
     senderName: alice.name,
     recipientName: 'Bob Recipient',
@@ -28,6 +40,23 @@ function seed() {
     from: 'USD',
     to: 'INR',
   });
+
+  transferService.createTransfer({
+    senderName: carlos.name,
+    recipientName: 'Ada Okoro',
+    amount: 250,
+    from: 'USD',
+    to: 'NGN',
+  });
+
+  const claimable = transferService.createTransfer({
+    senderName: alice.name,
+    recipientName: 'Carlos Diaz',
+    amount: 75,
+    from: 'EUR',
+    to: 'MXN',
+  });
+  transferService.claimTransfer(claimable.id);
 
   logger.info('Seeded demo users and transfers');
 }
