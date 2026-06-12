@@ -34,6 +34,29 @@ function listTransfers(status) {
 }
 
 /**
+ * Aggregate summary statistics across all transfers.
+ * Reports per-status counts and total send volume grouped by currency.
+ * @returns {{ total: number, byStatus: object, volumeByCurrency: object }}
+ */
+function getStats() {
+  const transfers = Array.from(store.transfers.values());
+
+  const byStatus = {};
+  for (const status of Object.values(TRANSFER_STATUS)) {
+    byStatus[status] = 0;
+  }
+
+  const volumeByCurrency = {};
+  for (const transfer of transfers) {
+    byStatus[transfer.status] = (byStatus[transfer.status] || 0) + 1;
+    const current = volumeByCurrency[transfer.from] || 0;
+    volumeByCurrency[transfer.from] = Math.round((current + transfer.sendAmount) * 100) / 100;
+  }
+
+  return { total: transfers.length, byStatus, volumeByCurrency };
+}
+
+/**
  * Get a transfer or throw a 404 if missing.
  * @param {string} id
  * @returns {object}
@@ -120,6 +143,7 @@ function cancelTransfer(id) {
 
 module.exports = {
   listTransfers,
+  getStats,
   getTransferOrThrow,
   createTransfer,
   claimTransfer,

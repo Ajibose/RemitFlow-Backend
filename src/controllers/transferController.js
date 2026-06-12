@@ -28,6 +28,14 @@ function listTransfers(req, res) {
 }
 
 /**
+ * GET /api/transfers/stats
+ * Return aggregate transfer statistics.
+ */
+function getStats(req, res) {
+  res.json(transferService.getStats());
+}
+
+/**
  * GET /api/transfers/:id
  * Fetch a single transfer by id.
  */
@@ -57,6 +65,7 @@ function cancelTransfer(req, res) {
 module.exports = {
   createTransfer,
   listTransfers,
+  getStats,
   getTransfer,
   claimTransfer,
   cancelTransfer,

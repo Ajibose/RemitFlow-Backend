@@ -18,6 +18,9 @@ router.post(
 // GET /api/transfers
 router.get('/', asyncHandler(transferController.listTransfers));
 
+// GET /api/transfers/stats (declared before /:id so it is not captured)
+router.get('/stats', asyncHandler(transferController.getStats));
+
 // GET /api/transfers/:id
 router.get('/:id', asyncHandler(transferController.getTransfer));
 
