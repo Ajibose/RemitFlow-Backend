@@ -6,6 +6,7 @@ const morgan = require('morgan');
 
 const config = require('./config');
 const routes = require('./routes');
+const securityHeaders = require('./middleware/securityHeaders');
 const requestId = require('./middleware/requestId');
 const requestLogger = require('./middleware/requestLogger');
 const rateLimit = require('./middleware/rateLimit');
@@ -23,6 +24,7 @@ function createApp() {
   const app = express();
 
   // Core middleware.
+  app.use(securityHeaders);
   app.use(cors({ origin: config.corsOrigin }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
