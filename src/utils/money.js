@@ -29,6 +29,22 @@ function isPositiveAmount(value) {
 }
 
 /**
+ * Constrain a numeric amount to an inclusive [min, max] range.
+ * Non-numeric input falls back to the minimum bound.
+ * @param {number} amount
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
+function clamp(amount, min, max) {
+  const n = Number(amount);
+  if (!Number.isFinite(n)) {
+    return min;
+  }
+  return Math.min(Math.max(n, min), max);
+}
+
+/**
  * Format an amount with its currency code, e.g. "10.00 USD".
  * @param {number} amount
  * @param {string} currency
@@ -42,5 +58,6 @@ module.exports = {
   DECIMALS,
   round,
   isPositiveAmount,
+  clamp,
   format,
 };
