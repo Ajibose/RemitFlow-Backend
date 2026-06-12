@@ -9,6 +9,22 @@ function format(level, args) {
   return [`[${ts}] [${level}]`, ...args];
 }
 
+/**
+ * Render a flat object of structured fields as `key=value` pairs.
+ * Skips undefined values and wraps strings containing spaces in quotes.
+ * @param {object} fields
+ * @returns {string}
+ */
+function fields(obj = {}) {
+  return Object.entries(obj)
+    .filter(([, value]) => value !== undefined)
+    .map(([key, value]) => {
+      const str = String(value);
+      return str.includes(' ') ? `${key}="${str}"` : `${key}=${str}`;
+    })
+    .join(' ');
+}
+
 const logger = {
   info(...args) {
     console.log(...format('INFO', args));
@@ -24,6 +40,7 @@ const logger = {
       console.log(...format('DEBUG', args));
     }
   },
+  fields,
 };
 
 module.exports = logger;
