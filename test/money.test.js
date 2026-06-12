@@ -26,6 +26,12 @@ test('clamp constrains values to the given range', () => {
   assert.equal(money.clamp('nope', 1, 10), 1);
 });
 
+test('percentage computes a rounded percent of an amount', () => {
+  assert.equal(money.percentage(100, 1.5), 1.5);
+  assert.equal(money.percentage(200, 10), 20);
+  assert.equal(money.percentage(33.33, 3), 1);
+});
+
 test('format renders amount with currency code', () => {
   assert.equal(money.format(10, 'USD'), '10.00 USD');
   assert.equal(money.format(2.5, 'EUR'), '2.50 EUR');

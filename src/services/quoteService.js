@@ -19,7 +19,7 @@ const ApiError = require('../utils/ApiError');
  * @returns {number}
  */
 function calculateFee(amount) {
-  const percentFee = amount * (config.fee.percent / 100);
+  const percentFee = money.percentage(amount, config.fee.percent);
   return money.round(percentFee + config.fee.flat);
 }
 

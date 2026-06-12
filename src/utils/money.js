@@ -45,6 +45,16 @@ function clamp(amount, min, max) {
 }
 
 /**
+ * Compute `percent` percent of `amount`, rounded to the money precision.
+ * @param {number} amount
+ * @param {number} percent - e.g. 1.5 for 1.5%.
+ * @returns {number}
+ */
+function percentage(amount, percent) {
+  return round(Number(amount) * (Number(percent) / 100));
+}
+
+/**
  * Format an amount with its currency code, e.g. "10.00 USD".
  * @param {number} amount
  * @param {string} currency
@@ -59,5 +69,6 @@ module.exports = {
   round,
   isPositiveAmount,
   clamp,
+  percentage,
   format,
 };
