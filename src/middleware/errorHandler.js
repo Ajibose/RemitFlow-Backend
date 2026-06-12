@@ -22,6 +22,7 @@ function errorHandler(err, req, res, next) {
       message: isApiError ? err.message : 'Internal server error',
       status: statusCode,
       details: isApiError ? err.details : undefined,
+      at: new Date().toISOString(),
     },
   });
 }
