@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('../config');
+const { version } = require('../../package.json');
 
 /**
  * Health controller.
@@ -14,6 +15,7 @@ function getHealth(req, res) {
   res.json({
     status: 'ok',
     service: 'remitflow-backend',
+    version,
     env: config.env,
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
