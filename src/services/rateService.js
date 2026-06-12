@@ -2,6 +2,7 @@
 
 const { RATES_TO_USD, SUPPORTED_CURRENCIES } = require('../config/rates');
 const money = require('../utils/money');
+const currency = require('../utils/currency');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -35,14 +36,16 @@ function isSupported(currency) {
  * @returns {number}
  */
 function getRate(from, to) {
-  if (!isSupported(from)) {
+  const fromCode = currency.normalize(from);
+  const toCode = currency.normalize(to);
+  if (!isSupported(fromCode)) {
     throw ApiError.badRequest(`Unsupported source currency: ${from}`);
   }
-  if (!isSupported(to)) {
+  if (!isSupported(toCode)) {
     throw ApiError.badRequest(`Unsupported target currency: ${to}`);
   }
   // Convert source -> USD -> target.
-  return RATES_TO_USD[from] / RATES_TO_USD[to];
+  return RATES_TO_USD[fromCode] / RATES_TO_USD[toCode];
 }
 
 /**
