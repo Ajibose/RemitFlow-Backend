@@ -32,6 +32,11 @@ class ApiError extends Error {
   static conflict(message, details) {
     return new ApiError(409, message, details);
   }
+
+  /** Convenience factory for 429 Too Many Requests. */
+  static tooManyRequests(message, details) {
+    return new ApiError(429, message, details);
+  }
 }
 
 module.exports = ApiError;
