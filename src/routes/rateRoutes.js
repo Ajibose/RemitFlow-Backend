@@ -11,6 +11,9 @@ const router = express.Router();
 // GET /api/rates
 router.get('/rates', asyncHandler(rateController.getRates));
 
+// GET /api/rates/:pair (e.g. /api/rates/USD-INR)
+router.get('/rates/:pair', asyncHandler(rateController.getRatePair));
+
 // GET /api/quote?amount=&from=&to=
 router.get(
   '/quote',

@@ -60,9 +60,26 @@ function convert(amount, from, to) {
   return money.round(amount * rate);
 }
 
+/**
+ * Describe a single currency pair, e.g. "USD-INR".
+ * @param {string} from
+ * @param {string} to
+ * @returns {{ from: string, to: string, rate: number }}
+ */
+function getPair(from, to) {
+  const fromCode = currency.normalize(from);
+  const toCode = currency.normalize(to);
+  return {
+    from: fromCode,
+    to: toCode,
+    rate: money.round(getRate(fromCode, toCode)),
+  };
+}
+
 module.exports = {
   listRates,
   isSupported,
   getRate,
   convert,
+  getPair,
 };

@@ -2,6 +2,7 @@
 
 const rateService = require('../services/rateService');
 const quoteService = require('../services/quoteService');
+const ApiError = require('../utils/ApiError');
 
 /**
  * Rate and quote controllers.
@@ -19,6 +20,18 @@ function getRates(req, res) {
 }
 
 /**
+ * GET /api/rates/:pair
+ * Returns the rate for a single pair given as "FROM-TO", e.g. "USD-INR".
+ */
+function getRatePair(req, res) {
+  const parts = String(req.params.pair || '').split('-');
+  if (parts.length !== 2) {
+    throw ApiError.badRequest('pair must be in the form FROM-TO, e.g. USD-INR');
+  }
+  res.json(rateService.getPair(parts[0], parts[1]));
+}
+
+/**
  * GET /api/quote?amount=&from=&to=
  * Returns an FX quote including the fee breakdown.
  */
@@ -30,5 +43,6 @@ function getQuote(req, res) {
 
 module.exports = {
   getRates,
+  getRatePair,
   getQuote,
 };
