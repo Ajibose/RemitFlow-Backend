@@ -3,6 +3,7 @@
 const config = require('../config');
 const rateService = require('./rateService');
 const money = require('../utils/money');
+const currency = require('../utils/currency');
 const ApiError = require('../utils/ApiError');
 
 /**
@@ -34,15 +35,17 @@ function getQuote(amount, from, to) {
     throw ApiError.badRequest('amount must be a positive number');
   }
 
+  const fromCode = currency.normalize(from);
+  const toCode = currency.normalize(to);
   const numericAmount = money.round(Number(amount));
   const fee = calculateFee(numericAmount);
   const amountAfterFee = money.round(numericAmount - fee);
-  const rate = rateService.getRate(from, to);
+  const rate = rateService.getRate(fromCode, toCode);
   const receiveAmount = money.round(amountAfterFee * rate);
 
   return {
-    from,
-    to,
+    from: fromCode,
+    to: toCode,
     sendAmount: numericAmount,
     fee,
     amountAfterFee,
