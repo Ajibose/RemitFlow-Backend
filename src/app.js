@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const routes = require('./routes');
 const requestLogger = require('./middleware/requestLogger');
+const jsonError = require('./middleware/jsonError');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -23,6 +24,7 @@ function createApp() {
   app.use(cors({ origin: config.corsOrigin }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
+  app.use(jsonError);
 
   // HTTP request logging (morgan in dev, custom logger always).
   if (config.env !== 'test') {
