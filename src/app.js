@@ -6,6 +6,7 @@ const morgan = require('morgan');
 
 const config = require('./config');
 const routes = require('./routes');
+const requestId = require('./middleware/requestId');
 const requestLogger = require('./middleware/requestLogger');
 const rateLimit = require('./middleware/rateLimit');
 const jsonError = require('./middleware/jsonError');
@@ -26,6 +27,9 @@ function createApp() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(jsonError);
+
+  // Assign/propagate a correlation id before logging.
+  app.use(requestId);
 
   // HTTP request logging (morgan in dev, custom logger always).
   if (config.env !== 'test') {
