@@ -38,6 +38,15 @@ const config = {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000,
     max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100,
   },
+
+  db: {
+    pool: {
+      min: parseInt(process.env.DB_POOL_MIN, 10) || 2,
+      max: parseInt(process.env.DB_POOL_MAX, 10) || 10,
+      idleTimeoutMs: parseInt(process.env.DB_POOL_IDLE_TIMEOUT_MS, 10) || 30000,
+      connectionTimeoutMs: parseInt(process.env.DB_POOL_CONNECTION_TIMEOUT_MS, 10) || 2000,
+    },
+  },
 };
 
 module.exports = config;
