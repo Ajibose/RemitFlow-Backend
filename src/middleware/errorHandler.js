@@ -2,11 +2,13 @@
 
 const logger = require('../utils/logger');
 const ApiError = require('../utils/ApiError');
+const { captureError } = require('../services/errorTrackingService');
 
 /**
  * Central Express error handler.
- * Renders a consistent JSON error envelope and hides internal
- * details for unexpected (non-ApiError) failures.
+ * Renders a consistent JSON error envelope, hides internal
+ * details for unexpected (non-ApiError) failures, and
+ * feeds every error through the error-tracking hook.
  */
 // eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
@@ -16,6 +18,8 @@ function errorHandler(err, req, res, next) {
   if (!isApiError) {
     logger.error('Unhandled error:', err.stack || err.message);
   }
+
+  captureError(err, req);
 
   res.status(statusCode).json({
     error: {
