@@ -8,6 +8,11 @@ on [Keep a Changelog](https://keepachangelog.com/) and this project adheres to
 
 ### Added
 
+- Error tracking integration hook (`src/services/errorTrackingService.js`)
+  that captures every error through a replaceable transport (console by
+  default) and enriches it with request context (id, method, url).
+  Controlled via `ERROR_TRACKING_ENABLED` and `ERROR_TRACKING_LEVEL`
+  environment variables.
 - Liveness (`GET /api/health/live`) and readiness (`GET /api/health/ready`)
   probe endpoints.
 - Single currency pair rate endpoint `GET /api/rates/:pair`.

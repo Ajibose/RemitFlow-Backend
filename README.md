@@ -53,7 +53,7 @@ src/
   controllers/  HTTP request handlers
   middleware/   logging, validation, error handling
   routes/       Express routers
-  services/     business logic (rates, quotes, transfers, users)
+  services/     business logic (rates, quotes, transfers, users, error tracking)
   store/        in-memory store and seed data
   utils/        logger, ids, money, ApiError, asyncHandler
   validators/   request validators
