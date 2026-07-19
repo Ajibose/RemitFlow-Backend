@@ -42,6 +42,13 @@ const config = {
   errorTracking: {
     enabled: process.env.ERROR_TRACKING_ENABLED !== 'false',
     level: process.env.ERROR_TRACKING_LEVEL || 'error',
+  db: {
+    pool: {
+      min: parseInt(process.env.DB_POOL_MIN, 10) || 2,
+      max: parseInt(process.env.DB_POOL_MAX, 10) || 10,
+      idleTimeoutMs: parseInt(process.env.DB_POOL_IDLE_TIMEOUT_MS, 10) || 30000,
+      connectionTimeoutMs: parseInt(process.env.DB_POOL_CONNECTION_TIMEOUT_MS, 10) || 2000,
+    },
   },
 };
 
