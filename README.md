@@ -21,6 +21,30 @@ npm start
 
 The server listens on `PORT` (default `3000`).
 
+## Configuration
+
+The application is configured using environment variables (typically defined in a `.env` file). The following variables are supported:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | The port the server listens on | `3000` |
+| `NODE_ENV` | Application environment (`development`, `production`, `test`) | `development` |
+| `DEFAULT_BASE_CURRENCY` | Default base currency for rates | `USD` |
+| `TRANSFER_FEE_PERCENT` | Percentage fee charged per transfer | `1.5` |
+| `TRANSFER_FEE_FLAT` | Flat fee charged per transfer | `0.30` |
+| `MAX_TRANSFER_AMOUNT` | Maximum single transfer amount accepted | `50000` |
+| `STELLAR_NETWORK` | Stellar network environment (`testnet`, `public`) | `testnet` |
+| `CORS_ORIGIN` | Allowed CORS origin | `*` |
+| `RATE_LIMIT_WINDOW_MS` | Time window for rate limiting (ms) | `60000` |
+| `RATE_LIMIT_MAX` | Max requests per window | `100` |
+| `BODY_LIMIT` | Max JSON request body size | `100kb` |
+| `REQUEST_TIMEOUT_MS` | Request timeout before returning 503 (ms) | `15000` |
+| `DB_POOL_MIN` | Minimum database connections in pool | `2` |
+| `DB_POOL_MAX` | Maximum database connections in pool | `10` |
+| `DB_POOL_IDLE_TIMEOUT_MS` | How long a connection can be idle before being closed (ms) | `30000` |
+| `DB_POOL_CONNECTION_TIMEOUT_MS` | Time to wait for a connection before timing out (ms) | `2000` |
+
+
 ## Project layout
 
 ```
