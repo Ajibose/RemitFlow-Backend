@@ -61,6 +61,21 @@ src/
   index.js      server bootstrap
 ```
 
+## Load Testing
+
+This project includes load-testing scripts utilizing [k6](https://k6.io/). To run the load tests:
+
+1. Install [k6](https://k6.io/docs/get-started/installation/).
+2. Start the application locally: `npm start`.
+3. In a separate terminal, run the load test:
+   ```bash
+   npm run load-test
+   ```
+   Alternatively, you can provide a custom base URL:
+   ```bash
+   BASE_URL=http://your-staging-server.com k6 run scripts/load-test.js
+   ```
+
 ## API overview
 
 See the endpoint reference below. All responses are JSON. Errors use a
