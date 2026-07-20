@@ -42,6 +42,8 @@ const config = {
   errorTracking: {
     enabled: process.env.ERROR_TRACKING_ENABLED !== 'false',
     level: process.env.ERROR_TRACKING_LEVEL || 'error',
+  },
+
   db: {
     pool: {
       min: parseInt(process.env.DB_POOL_MIN, 10) || 2,
