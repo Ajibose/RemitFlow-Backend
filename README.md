@@ -43,6 +43,7 @@ The application is configured using environment variables (typically defined in 
 | `DB_POOL_MAX` | Maximum database connections in pool | `10` |
 | `DB_POOL_IDLE_TIMEOUT_MS` | How long a connection can be idle before being closed (ms) | `30000` |
 | `DB_POOL_CONNECTION_TIMEOUT_MS` | Time to wait for a connection before timing out (ms) | `2000` |
+| `MAINTENANCE_MODE` | When `true`, all non-health API routes return 503 | `false` |
 
 
 ## Project layout
@@ -119,6 +120,10 @@ supplied) so logs and errors can be correlated.
 - `GET /api/users` — list users.
 - `GET /api/users/:id` — fetch one user.
 - `POST /api/users` — create a user. Body: `{ name, email, country? }`
+
+### Audit log
+
+- `GET /api/audit` — list all write-operation audit entries (newest first). Supports `?resourceId=` to filter by resource id and `?limit=`/`?offset=` pagination.
 
 ## Transfer lifecycle
 

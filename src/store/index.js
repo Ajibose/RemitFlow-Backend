@@ -1,5 +1,7 @@
 'use strict';
 
+const auditService = require('../services/auditService');
+
 /**
  * Simple in-memory data store.
  * Data lives only for the lifetime of the process; restarting the
@@ -14,6 +16,7 @@ const store = {
 function reset() {
   store.users.clear();
   store.transfers.clear();
+  auditService.reset();
 }
 
 module.exports = {

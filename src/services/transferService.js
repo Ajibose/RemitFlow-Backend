@@ -6,6 +6,7 @@ const ApiError = require('../utils/ApiError');
 const { TRANSFER_STATUS, TRANSFER_TRANSITIONS } = require('../config/constants');
 const quoteService = require('./quoteService');
 const stellarService = require('./stellarService');
+const auditService = require('./auditService');
 
 /**
  * Transfer lifecycle management.
@@ -87,9 +88,10 @@ function getTransferOrThrow(id) {
 /**
  * Create a new transfer using a freshly computed quote.
  * @param {object} data
+ * @param {string} [requestId] - optional correlation id for audit logging
  * @returns {object}
  */
-function createTransfer(data) {
+function createTransfer(data, requestId) {
   const quote = quoteService.getQuote(data.amount, data.from, data.to);
   const settlement = stellarService.submitPayment({
     amount: quote.sendAmount,
@@ -113,6 +115,20 @@ function createTransfer(data) {
   };
 
   store.transfers.set(transfer.id, transfer);
+
+  auditService.addEntry({
+    action: 'transfer.created',
+    resourceId: transfer.id,
+    payload: {
+      senderName: transfer.senderName,
+      recipientName: transfer.recipientName,
+      from: transfer.from,
+      to: transfer.to,
+      sendAmount: transfer.sendAmount,
+    },
+    requestId,
+  });
+
   return transfer;
 }
 
@@ -137,23 +153,42 @@ function transition(transfer, nextStatus) {
 /**
  * Mark a transfer as claimed by the recipient.
  * @param {string} id
+ * @param {string} [requestId] - optional correlation id for audit logging
  * @returns {object}
  */
-function claimTransfer(id) {
+function claimTransfer(id, requestId) {
   const transfer = getTransferOrThrow(id);
   transition(transfer, TRANSFER_STATUS.CLAIMED);
   transfer.claimableBalanceId = stellarService.createClaimableBalanceId();
+
+  auditService.addEntry({
+    action: 'transfer.claimed',
+    resourceId: transfer.id,
+    payload: { claimableBalanceId: transfer.claimableBalanceId },
+    requestId,
+  });
+
   return transfer;
 }
 
 /**
  * Cancel a pending transfer.
  * @param {string} id
+ * @param {string} [requestId] - optional correlation id for audit logging
  * @returns {object}
  */
-function cancelTransfer(id) {
+function cancelTransfer(id, requestId) {
   const transfer = getTransferOrThrow(id);
-  return transition(transfer, TRANSFER_STATUS.CANCELLED);
+  transition(transfer, TRANSFER_STATUS.CANCELLED);
+
+  auditService.addEntry({
+    action: 'transfer.cancelled',
+    resourceId: transfer.id,
+    payload: {},
+    requestId,
+  });
+
+  return transfer;
 }
 
 module.exports = {

@@ -12,7 +12,7 @@ const { parsePagination } = require('../utils/pagination');
  * Create a new transfer.
  */
 function createTransfer(req, res) {
-  const transfer = transferService.createTransfer(req.body);
+  const transfer = transferService.createTransfer(req.body, req.id);
   res.status(201).json(transfer);
 }
 
@@ -52,7 +52,7 @@ function getTransfer(req, res) {
  * Mark a transfer as claimed by the recipient.
  */
 function claimTransfer(req, res) {
-  const transfer = transferService.claimTransfer(req.params.id);
+  const transfer = transferService.claimTransfer(req.params.id, req.id);
   res.json(transfer);
 }
 
@@ -61,7 +61,7 @@ function claimTransfer(req, res) {
  * Cancel a pending transfer.
  */
 function cancelTransfer(req, res) {
-  const transfer = transferService.cancelTransfer(req.params.id);
+  const transfer = transferService.cancelTransfer(req.params.id, req.id);
   res.json(transfer);
 }
 
