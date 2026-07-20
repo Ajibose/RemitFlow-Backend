@@ -43,6 +43,8 @@ The application is configured using environment variables (typically defined in 
 | `DB_POOL_MAX` | Maximum database connections in pool | `10` |
 | `DB_POOL_IDLE_TIMEOUT_MS` | How long a connection can be idle before being closed (ms) | `30000` |
 | `DB_POOL_CONNECTION_TIMEOUT_MS` | Time to wait for a connection before timing out (ms) | `2000` |
+| `CACHE_DEFAULT_POLICY` | Default cache policy for endpoints (`no-store`, `public`, `private`) | `no-store` |
+| `CACHE_RATES_MAX_AGE_SECONDS` | Cache duration for rates endpoints (seconds) | `10` |
 
 
 ## Project layout
@@ -72,6 +74,13 @@ consistent envelope:
 
 Every response carries an `X-Request-Id` header (echoed from the request when
 supplied) so logs and errors can be correlated.
+
+### Caching and headers
+
+The API implements Cache-Control response headers for security and efficiency:
+- **Default policy**: All endpoints (such as transfers, users, quotes, and health check probes) are non-cacheable by default (`Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate`, `Pragma: no-cache`, `Expires: 0`).
+- **Rates (`GET /api/rates`, `GET /api/rates/:pair`)**: Cached publicly with a short duration (default 10 seconds, configured via `CACHE_RATES_MAX_AGE_SECONDS`).
+- **Version (`GET /api/version`)**: Cached publicly for 1 hour (`max-age=3600`).
 
 ## Endpoints
 

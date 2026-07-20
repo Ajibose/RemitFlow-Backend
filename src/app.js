@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 const routes = require('./routes');
 const securityHeaders = require('./middleware/securityHeaders');
+const cacheControl = require('./middleware/cacheControl');
 const requestTimeout = require('./middleware/requestTimeout');
 const requestId = require('./middleware/requestId');
 const requestLogger = require('./middleware/requestLogger');
@@ -26,6 +27,7 @@ function createApp() {
 
   // Core middleware.
   app.use(securityHeaders);
+  app.use(cacheControl({ policy: config.cache.defaultPolicy }));
   app.use(cors({ origin: config.corsOrigin }));
   app.use(express.json({ limit: config.bodyLimit }));
   app.use(express.urlencoded({ extended: false, limit: config.bodyLimit }));
