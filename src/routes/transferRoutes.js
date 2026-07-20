@@ -30,4 +30,10 @@ router.post('/:id/claim', asyncHandler(transferController.claimTransfer));
 // POST /api/transfers/:id/cancel
 router.post('/:id/cancel', asyncHandler(transferController.cancelTransfer));
 
+// POST /api/transfers/:id/archive
+router.post('/:id/archive', asyncHandler(transferController.archiveTransfer));
+
+// POST /api/transfers/:id/unarchive
+router.post('/:id/unarchive', asyncHandler(transferController.unarchiveTransfer));
+
 module.exports = router;
