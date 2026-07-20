@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const cacheControl = require('../middleware/cacheControl');
 const asyncHandler = require('../utils/asyncHandler');
 const healthController = require('../controllers/healthController');
 const healthRoutes = require('./healthRoutes');
@@ -12,7 +13,11 @@ const auditRoutes = require('./auditRoutes');
 const router = express.Router();
 
 // GET /api/version
-router.get('/version', asyncHandler(healthController.getVersion));
+router.get(
+  '/version',
+  cacheControl({ policy: 'public', maxAge: 3600 }),
+  asyncHandler(healthController.getVersion)
+);
 
 // Mount the feature routers under the /api namespace.
 router.use('/health', healthRoutes);

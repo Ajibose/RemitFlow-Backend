@@ -43,7 +43,8 @@ The application is configured using environment variables (typically defined in 
 | `DB_POOL_MAX` | Maximum database connections in pool | `10` |
 | `DB_POOL_IDLE_TIMEOUT_MS` | How long a connection can be idle before being closed (ms) | `30000` |
 | `DB_POOL_CONNECTION_TIMEOUT_MS` | Time to wait for a connection before timing out (ms) | `2000` |
-| `MAINTENANCE_MODE` | When `true`, all non-health API routes return 503 | `false` |
+| `CACHE_DEFAULT_POLICY` | Default cache policy for endpoints (`no-store`, `public`, `private`) | `no-store` |
+| `CACHE_RATES_MAX_AGE_SECONDS` | Cache duration for rates endpoints (seconds) | `10` |
 
 
 ## Project layout
@@ -62,21 +63,6 @@ src/
   index.js      server bootstrap
 ```
 
-## Load Testing
-
-This project includes load-testing scripts utilizing [k6](https://k6.io/). To run the load tests:
-
-1. Install [k6](https://k6.io/docs/get-started/installation/).
-2. Start the application locally: `npm start`.
-3. In a separate terminal, run the load test:
-   ```bash
-   npm run load-test
-   ```
-   Alternatively, you can provide a custom base URL:
-   ```bash
-   BASE_URL=http://your-staging-server.com k6 run scripts/load-test.js
-   ```
-
 ## API overview
 
 See the endpoint reference below. All responses are JSON. Errors use a
@@ -88,6 +74,13 @@ consistent envelope:
 
 Every response carries an `X-Request-Id` header (echoed from the request when
 supplied) so logs and errors can be correlated.
+
+### Caching and headers
+
+The API implements Cache-Control response headers for security and efficiency:
+- **Default policy**: All endpoints (such as transfers, users, quotes, and health check probes) are non-cacheable by default (`Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate`, `Pragma: no-cache`, `Expires: 0`).
+- **Rates (`GET /api/rates`, `GET /api/rates/:pair`)**: Cached publicly with a short duration (default 10 seconds, configured via `CACHE_RATES_MAX_AGE_SECONDS`).
+- **Version (`GET /api/version`)**: Cached publicly for 1 hour (`max-age=3600`).
 
 ## Endpoints
 
@@ -120,10 +113,6 @@ supplied) so logs and errors can be correlated.
 - `GET /api/users` — list users.
 - `GET /api/users/:id` — fetch one user.
 - `POST /api/users` — create a user. Body: `{ name, email, country? }`
-
-### Audit log
-
-- `GET /api/audit` — list all write-operation audit entries (newest first). Supports `?resourceId=` to filter by resource id and `?limit=`/`?offset=` pagination.
 
 ## Transfer lifecycle
 

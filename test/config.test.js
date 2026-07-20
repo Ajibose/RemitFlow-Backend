@@ -49,3 +49,40 @@ test('config respects database environment variables', () => {
     delete require.cache[require.resolve('../src/config')];
   }
 });
+
+test('config loads default caching options', () => {
+  delete require.cache[require.resolve('../src/config')];
+  const config = require('../src/config');
+
+  assert.ok(config.cache);
+  assert.equal(config.cache.defaultPolicy, 'no-store');
+  assert.equal(config.cache.ratesMaxAge, 10);
+});
+
+test('config respects cache environment variables', () => {
+  const originalEnv = {
+    CACHE_DEFAULT_POLICY: process.env.CACHE_DEFAULT_POLICY,
+    CACHE_RATES_MAX_AGE_SECONDS: process.env.CACHE_RATES_MAX_AGE_SECONDS,
+  };
+
+  try {
+    process.env.CACHE_DEFAULT_POLICY = 'public';
+    process.env.CACHE_RATES_MAX_AGE_SECONDS = '60';
+
+    delete require.cache[require.resolve('../src/config')];
+    const config = require('../src/config');
+
+    assert.equal(config.cache.defaultPolicy, 'public');
+    assert.equal(config.cache.ratesMaxAge, 60);
+  } finally {
+    for (const key of Object.keys(originalEnv)) {
+      if (originalEnv[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = originalEnv[key];
+      }
+    }
+    delete require.cache[require.resolve('../src/config')];
+  }
+});
+

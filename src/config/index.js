@@ -43,10 +43,6 @@ const config = {
     enabled: process.env.ERROR_TRACKING_ENABLED !== 'false',
     level: process.env.ERROR_TRACKING_LEVEL || 'error',
   },
-
-  // Maintenance mode: when true the API returns 503 for all non-health routes.
-  maintenanceMode: process.env.MAINTENANCE_MODE === 'true',
-
   db: {
     pool: {
       min: parseInt(process.env.DB_POOL_MIN, 10) || 2,
@@ -54,6 +50,11 @@ const config = {
       idleTimeoutMs: parseInt(process.env.DB_POOL_IDLE_TIMEOUT_MS, 10) || 30000,
       connectionTimeoutMs: parseInt(process.env.DB_POOL_CONNECTION_TIMEOUT_MS, 10) || 2000,
     },
+  },
+
+  cache: {
+    defaultPolicy: process.env.CACHE_DEFAULT_POLICY || 'no-store',
+    ratesMaxAge: parseInt(process.env.CACHE_RATES_MAX_AGE_SECONDS, 10) || 10,
   },
 };
 
