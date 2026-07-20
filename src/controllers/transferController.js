@@ -19,11 +19,24 @@ function createTransfer(req, res) {
 /**
  * GET /api/transfers
  * List transfers, optionally filtered by ?status= and/or ?q= (name search).
+ * Archived transfers are excluded by default; pass ?archived=true to see only archived,
+ * or ?archived=all to include both archived and non-archived.
  */
 function listTransfers(req, res) {
+  const archivedParam = req.query.archived;
+  let archived;
+  if (archivedParam === 'true') {
+    archived = true;
+  } else if (archivedParam === 'all') {
+    archived = 'all';
+  } else {
+    archived = false;
+  }
+
   const all = transferService.listTransfers({
     status: req.query.status,
     search: req.query.q,
+    archived,
   });
   const { limit, offset } = parsePagination(req.query);
   const transfers = all.slice(offset, offset + limit);
@@ -65,6 +78,24 @@ function cancelTransfer(req, res) {
   res.json(transfer);
 }
 
+/**
+ * POST /api/transfers/:id/archive
+ * Archive a transfer, hiding it from default list results.
+ */
+function archiveTransfer(req, res) {
+  const transfer = transferService.archiveTransfer(req.params.id);
+  res.json(transfer);
+}
+
+/**
+ * POST /api/transfers/:id/unarchive
+ * Unarchive a transfer, restoring it to default list results.
+ */
+function unarchiveTransfer(req, res) {
+  const transfer = transferService.unarchiveTransfer(req.params.id);
+  res.json(transfer);
+}
+
 module.exports = {
   createTransfer,
   listTransfers,
@@ -72,4 +103,6 @@ module.exports = {
   getTransfer,
   claimTransfer,
   cancelTransfer,
+  archiveTransfer,
+  unarchiveTransfer,
 };

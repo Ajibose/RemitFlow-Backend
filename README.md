@@ -102,11 +102,14 @@ The API implements Cache-Control response headers for security and efficiency:
 - `POST /api/transfers` — create a transfer.
   Body: `{ senderName, recipientName, amount, from, to }`
 - `GET /api/transfers` — list transfers. Supports `?status=`, `?q=` (name
-  search) and `?limit=`/`?offset=` pagination.
+  search), `?archived=` (true/false/all), and `?limit=`/`?offset=` pagination.
+  Archived transfers are excluded from results by default.
 - `GET /api/transfers/stats` — aggregate counts and volume by currency.
 - `GET /api/transfers/:id` — fetch one transfer.
 - `POST /api/transfers/:id/claim` — recipient claims the transfer.
 - `POST /api/transfers/:id/cancel` — sender cancels a pending transfer.
+- `POST /api/transfers/:id/archive` — archive a transfer, hiding it from default list results.
+- `POST /api/transfers/:id/unarchive` — unarchive a transfer, restoring it to default list results.
 
 ### Users
 
@@ -125,6 +128,11 @@ pending ──▶ claimed
 A transfer starts as `pending` and can move to either `claimed` or
 `cancelled`. Terminal states cannot transition further.
 
+**Archival:** Transfers can be archived independently of their lifecycle status.
+Archived transfers are excluded from default list results but remain queryable
+via `?archived=true`. Use `/api/transfers/:id/archive` to archive and
+`/api/transfers/:id/unarchive` to restore a transfer.
+
 ## Examples
 
 ```bash
@@ -142,4 +150,11 @@ curl -X POST http://localhost:3000/api/transfers/<id>/claim
 # Search transfers by name and view aggregate stats
 curl "http://localhost:3000/api/transfers?q=alice"
 curl "http://localhost:3000/api/transfers/stats"
+
+# Archive and unarchive transfers
+curl -X POST http://localhost:3000/api/transfers/<id>/archive
+curl -X POST http://localhost:3000/api/transfers/<id>/unarchive
+
+# List only archived transfers
+curl "http://localhost:3000/api/transfers?archived=true"
 ```

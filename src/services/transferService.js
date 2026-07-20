@@ -17,14 +17,25 @@ const auditService = require('./auditService');
 /**
  * Return all transfers, optionally filtered by status and/or a free-text
  * search across the sender and recipient names.
+ * Archived transfers are excluded from default results unless explicitly requested.
  * @param {object} [filters]
  * @param {string} [filters.status]
  * @param {string} [filters.search]
+ * @param {boolean} [filters.archived] - if true, return only archived; if false, exclude archived (default)
  * @returns {Array<object>}
  */
 function listTransfers(filters = {}) {
-  const { status, search } = filters;
+  const { status, search, archived } = filters;
   let transfers = Array.from(store.transfers.values());
+
+  // Filter by archived state: default excludes archived transfers
+  if (archived === true) {
+    transfers = transfers.filter((t) => t.archivedAt != null);
+  } else if (archived !== 'all') {
+    // archived === false or undefined: exclude archived
+    transfers = transfers.filter((t) => !t.archivedAt);
+  }
+  // archived === 'all' includes both archived and non-archived
 
   if (status) {
     const validStatuses = Object.values(TRANSFER_STATUS);
@@ -112,6 +123,7 @@ function createTransfer(data, requestId) {
     stellar: settlement,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    archivedAt: null,
   };
 
   store.transfers.set(transfer.id, transfer);
@@ -191,6 +203,37 @@ function cancelTransfer(id, requestId) {
   return transfer;
 }
 
+/**
+ * Archive a transfer. An archived transfer is hidden from default list results
+ * but remains queryable. Archiving is idempotent and orthogonal to the transfer
+ * lifecycle status.
+ * @param {string} id
+ * @returns {object}
+ */
+function archiveTransfer(id) {
+  const transfer = getTransferOrThrow(id);
+  if (!transfer.archivedAt) {
+    transfer.archivedAt = new Date().toISOString();
+    transfer.updatedAt = new Date().toISOString();
+  }
+  return transfer;
+}
+
+/**
+ * Unarchive a previously archived transfer, restoring it to default list results.
+ * @param {string} id
+ * @returns {object}
+ */
+function unarchiveTransfer(id) {
+  const transfer = getTransferOrThrow(id);
+  if (!transfer.archivedAt) {
+    throw ApiError.conflict(`Transfer is not archived: ${id}`);
+  }
+  transfer.archivedAt = null;
+  transfer.updatedAt = new Date().toISOString();
+  return transfer;
+}
+
 module.exports = {
   listTransfers,
   getStats,
@@ -198,4 +241,6 @@ module.exports = {
   createTransfer,
   claimTransfer,
   cancelTransfer,
+  archiveTransfer,
+  unarchiveTransfer,
 };
