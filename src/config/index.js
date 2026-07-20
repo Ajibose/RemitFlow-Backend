@@ -42,6 +42,11 @@ const config = {
   errorTracking: {
     enabled: process.env.ERROR_TRACKING_ENABLED !== 'false',
     level: process.env.ERROR_TRACKING_LEVEL || 'error',
+  },
+
+  // Maintenance mode: when true the API returns 503 for all non-health routes.
+  maintenanceMode: process.env.MAINTENANCE_MODE === 'true',
+
   db: {
     pool: {
       min: parseInt(process.env.DB_POOL_MIN, 10) || 2,

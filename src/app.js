@@ -11,6 +11,7 @@ const requestTimeout = require('./middleware/requestTimeout');
 const requestId = require('./middleware/requestId');
 const requestLogger = require('./middleware/requestLogger');
 const rateLimit = require('./middleware/rateLimit');
+const maintenanceMode = require('./middleware/maintenanceMode');
 const jsonError = require('./middleware/jsonError');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
@@ -45,6 +46,9 @@ function createApp() {
 
   // Basic abuse protection on the API surface.
   app.use('/api', rateLimit(config.rateLimit));
+
+  // Block all non-health API traffic while maintenance mode is active.
+  app.use(maintenanceMode);
 
   // API routes.
   app.use('/api', routes);

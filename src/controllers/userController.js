@@ -32,7 +32,7 @@ function getUser(req, res) {
  * Create a new user.
  */
 function createUser(req, res) {
-  const user = userService.createUser(req.body);
+  const user = userService.createUser(req.body, req.id);
   res.status(201).json(user);
 }
 

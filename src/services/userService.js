@@ -3,6 +3,7 @@
 const { store } = require('../store');
 const { prefixedId } = require('../utils/ids');
 const ApiError = require('../utils/ApiError');
+const auditService = require('./auditService');
 
 /**
  * User management backed by the in-memory store.
@@ -41,9 +42,10 @@ function getUserOrThrow(id) {
 /**
  * Create and persist a new user.
  * @param {{ name: string, email: string, country?: string }} data
+ * @param {string} [requestId] - optional correlation id for audit logging
  * @returns {object}
  */
-function createUser(data) {
+function createUser(data, requestId) {
   const user = {
     id: prefixedId('usr'),
     name: data.name,
@@ -52,6 +54,14 @@ function createUser(data) {
     createdAt: new Date().toISOString(),
   };
   store.users.set(user.id, user);
+
+  auditService.addEntry({
+    action: 'user.created',
+    resourceId: user.id,
+    payload: { name: user.name, country: user.country },
+    requestId,
+  });
+
   return user;
 }
 
