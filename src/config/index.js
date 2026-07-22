@@ -43,6 +43,8 @@ const config = {
     enabled: process.env.ERROR_TRACKING_ENABLED !== 'false',
     level: process.env.ERROR_TRACKING_LEVEL || 'error',
   },
+
+  adminApiKey: process.env.ADMIN_API_KEY || 'admin-secret-dev',
   db: {
     pool: {
       min: parseInt(process.env.DB_POOL_MIN, 10) || 2,

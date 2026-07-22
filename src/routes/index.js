@@ -9,6 +9,7 @@ const rateRoutes = require('./rateRoutes');
 const transferRoutes = require('./transferRoutes');
 const userRoutes = require('./userRoutes');
 const auditRoutes = require('./auditRoutes');
+const adminRoutes = require('./adminRoutes');
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.use('/', rateRoutes);
 router.use('/transfers', transferRoutes);
 router.use('/users', userRoutes);
 router.use('/audit', auditRoutes);
+router.use('/admin', adminRoutes);
 
 module.exports = router;
