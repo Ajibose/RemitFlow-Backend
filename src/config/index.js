@@ -31,8 +31,22 @@ const config = {
   // Maximum accepted JSON request body size (passed to express.json).
   bodyLimit: process.env.BODY_LIMIT || '100kb',
 
-  // Per-request time budget before a 503 is returned.
+  // Per-request time budget before a 503 is returned. Applied to every
+  // route by default; individual routers can override it (see routeTimeouts)
+  // for endpoints that are known to be faster or slower than average.
   requestTimeoutMs: parseInt(process.env.REQUEST_TIMEOUT_MS, 10) || 15 * 1000,
+
+  // Per-route overrides of requestTimeoutMs.
+  routeTimeouts: {
+    // Health/liveness/readiness probes should fail fast so orchestrators
+    // (e.g. Kubernetes) don't wait the full default budget to mark the
+    // instance unhealthy.
+    healthMs: parseInt(process.env.HEALTH_REQUEST_TIMEOUT_MS, 10) || 2 * 1000,
+    // Transfers submit to the (mocked) Stellar network, which can take
+    // longer than the default budget under real network conditions.
+    transfersMs:
+      parseInt(process.env.TRANSFER_REQUEST_TIMEOUT_MS, 10) || 30 * 1000,
+  },
 
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 60 * 1000,

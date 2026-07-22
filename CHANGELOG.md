@@ -30,6 +30,10 @@ When preparing a new release:
 - Free-text name search on transfer listing via `?q=`.
 - Security headers middleware (nosniff, frame, referrer, CSP).
 - Request timeout middleware returning 503 when a handler stalls.
+- Per-route request timeout overrides: health/liveness/readiness probes get
+  a shorter budget (`HEALTH_REQUEST_TIMEOUT_MS`, default 2s) and transfer
+  endpoints get a longer one (`TRANSFER_REQUEST_TIMEOUT_MS`, default 30s),
+  layered on top of the global `REQUEST_TIMEOUT_MS` default.
 - Configurable JSON request body size limit (413 on overflow).
 - Configurable maximum transfer amount with validation.
 - `percentage` helper on the money util and a `strings` utility module, both
