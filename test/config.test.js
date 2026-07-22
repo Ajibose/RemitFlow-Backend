@@ -50,6 +50,46 @@ test('config respects database environment variables', () => {
   }
 });
 
+test('config loads default request timeout options', () => {
+  delete require.cache[require.resolve('../src/config')];
+  const config = require('../src/config');
+
+  assert.equal(config.requestTimeoutMs, 15000);
+  assert.ok(config.routeTimeouts);
+  assert.equal(config.routeTimeouts.healthMs, 2000);
+  assert.equal(config.routeTimeouts.transfersMs, 30000);
+});
+
+test('config respects request timeout environment variables', () => {
+  const originalEnv = {
+    REQUEST_TIMEOUT_MS: process.env.REQUEST_TIMEOUT_MS,
+    HEALTH_REQUEST_TIMEOUT_MS: process.env.HEALTH_REQUEST_TIMEOUT_MS,
+    TRANSFER_REQUEST_TIMEOUT_MS: process.env.TRANSFER_REQUEST_TIMEOUT_MS,
+  };
+
+  try {
+    process.env.REQUEST_TIMEOUT_MS = '10000';
+    process.env.HEALTH_REQUEST_TIMEOUT_MS = '1000';
+    process.env.TRANSFER_REQUEST_TIMEOUT_MS = '45000';
+
+    delete require.cache[require.resolve('../src/config')];
+    const config = require('../src/config');
+
+    assert.equal(config.requestTimeoutMs, 10000);
+    assert.equal(config.routeTimeouts.healthMs, 1000);
+    assert.equal(config.routeTimeouts.transfersMs, 45000);
+  } finally {
+    for (const key of Object.keys(originalEnv)) {
+      if (originalEnv[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = originalEnv[key];
+      }
+    }
+    delete require.cache[require.resolve('../src/config')];
+  }
+});
+
 test('config loads default caching options', () => {
   delete require.cache[require.resolve('../src/config')];
   const config = require('../src/config');

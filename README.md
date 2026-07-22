@@ -38,7 +38,9 @@ The application is configured using environment variables (typically defined in 
 | `RATE_LIMIT_WINDOW_MS` | Time window for rate limiting (ms) | `60000` |
 | `RATE_LIMIT_MAX` | Max requests per window | `100` |
 | `BODY_LIMIT` | Max JSON request body size | `100kb` |
-| `REQUEST_TIMEOUT_MS` | Request timeout before returning 503 (ms) | `15000` |
+| `REQUEST_TIMEOUT_MS` | Default request timeout before returning 503 (ms) | `15000` |
+| `HEALTH_REQUEST_TIMEOUT_MS` | Request timeout for health/liveness/readiness probes (ms) | `2000` |
+| `TRANSFER_REQUEST_TIMEOUT_MS` | Request timeout for transfer endpoints (ms) | `30000` |
 | `DB_POOL_MIN` | Minimum database connections in pool | `2` |
 | `DB_POOL_MAX` | Maximum database connections in pool | `10` |
 | `DB_POOL_IDLE_TIMEOUT_MS` | How long a connection can be idle before being closed (ms) | `30000` |
@@ -81,6 +83,19 @@ The API implements Cache-Control response headers for security and efficiency:
 - **Default policy**: All endpoints (such as transfers, users, quotes, and health check probes) are non-cacheable by default (`Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate`, `Pragma: no-cache`, `Expires: 0`).
 - **Rates (`GET /api/rates`, `GET /api/rates/:pair`)**: Cached publicly with a short duration (default 10 seconds, configured via `CACHE_RATES_MAX_AGE_SECONDS`).
 - **Version (`GET /api/version`)**: Cached publicly for 1 hour (`max-age=3600`).
+
+### Request timeouts
+
+Every request has a time budget; if a handler hasn't responded before the
+budget elapses, the server returns `503 Service Unavailable` instead of
+hanging the connection. The default budget (`REQUEST_TIMEOUT_MS`) applies
+to all routes, but individual routers can override it for endpoints with
+different latency profiles:
+- **Health probes (`/api/health*`)**: shorter budget (default 2s via
+  `HEALTH_REQUEST_TIMEOUT_MS`) so orchestrators get a fast fail/pass signal.
+- **Transfers (`/api/transfers*`)**: longer budget (default 30s via
+  `TRANSFER_REQUEST_TIMEOUT_MS`) to allow for slower (mock) Stellar network
+  submissions.
 
 ## Endpoints
 

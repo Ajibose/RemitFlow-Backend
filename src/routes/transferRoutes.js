@@ -1,12 +1,18 @@
 'use strict';
 
 const express = require('express');
+const config = require('../config');
 const asyncHandler = require('../utils/asyncHandler');
+const requestTimeout = require('../middleware/requestTimeout');
 const validate = require('../middleware/validate');
 const transferController = require('../controllers/transferController');
 const { validateCreateTransfer } = require('../validators/transferValidator');
 
 const router = express.Router();
+
+// Transfers submit to the (mocked) Stellar network, so they get a longer
+// budget than the global default before the request is failed with a 503.
+router.use(requestTimeout({ ms: config.routeTimeouts.transfersMs }));
 
 // POST /api/transfers
 router.post(
